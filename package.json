@@ -1,0 +1,18 @@
+{
+  "name": "q1-canvas-race-suite",
+  "version": "1.0.0",
+  "description": "",
+  "main": "q1-canvas-suite.js",
+  "scripts": {
+    "test": "node q1-canvas-suite.js",
+    "test:naive": "NAIVE=1 node q1-canvas-suite.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.64.1",
+    "playwright-core": "^1.64.1",
+    "ws": "^8.22.0"
+  }
+}

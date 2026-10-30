@@ -1,0 +1,31 @@
+[2026-10-29T11:48:48.665Z] rAF pixel watcher armed on target cell (gray = loading)
+[2026-10-29T11:48:48.667Z] [ws] message #1 delayed 1000 ms (1000 x Fib(1) capped 8000)
+[2026-10-29T11:48:48.967Z] [ws] message #2 delayed 1000 ms (1000 x Fib(2) capped 8000)
+[2026-10-29T11:48:49.066Z] [ws] message #3 delayed 2000 ms (1000 x Fib(3) capped 8000)
+[2026-10-29T11:48:49.467Z] [ws] message #4 delayed 3000 ms (1000 x Fib(4) capped 8000)
+[2026-10-29T11:48:49.867Z] [ws] message #5 (tick 2) CORRUPTED -> balance=1e+7
+[2026-10-29T11:48:49.867Z] [ws] message #5 delayed 5000 ms (1000 x Fib(5) capped 8000)
+[2026-10-29T11:48:49.989Z] PIXEL FLIP detected rgb=[255,214,0] at frame 83
+[2026-10-29T11:48:49.996Z] cached fast-path coordinates from detection frame: canvas (315, 275)
+[2026-10-29T11:48:50.030Z] chain fired 41.7 ms after pixel flip (target window 30-100 ms, chosen offset 41.6)
+[2026-10-29T11:48:50.114Z] [breaker] "hover-drag-click" attempt 1 failed: stale coordinates, events=[]  (consecutive failures 1/3)
+[2026-10-29T11:48:50.142Z] [breaker] grid offsets refreshed -> (434, 274)
+[2026-10-29T11:48:50.211Z] PASS  chained actions landed after 2 attempt(s): ["down","up:15","click","down","up:15","click"]
+[2026-10-29T11:48:50.242Z] PASS  pixel verification: target cell repainted to CONFIRM blue
+[2026-10-29T11:48:50.242Z] waiting for corrupted tick (event-driven, 25 s safety cap)
+[2026-10-29T11:48:50.267Z] [ws] message #6 delayed 8000 ms (1000 x Fib(6) capped 8000)
+[2026-10-29T11:48:50.667Z] [ws] message #7 delayed 8000 ms (1000 x Fib(7) capped 8000)
+[2026-10-29T11:48:51.069Z] [ws] message #8 delayed 8000 ms (1000 x Fib(8) capped 8000)
+[2026-10-29T11:48:51.471Z] [ws] message #9 delayed 8000 ms (1000 x Fib(9) capped 8000)
+[2026-10-29T11:48:51.871Z] [ws] message #10 delayed 8000 ms (1000 x Fib(10) capped 8000)
+[2026-10-29T11:48:52.273Z] [ws] message #11 delayed 8000 ms (1000 x Fib(11) capped 8000)
+[2026-10-29T11:48:52.671Z] [ws] message #12 delayed 8000 ms (1000 x Fib(12) capped 8000)
+[2026-10-29T11:48:53.071Z] [ws] message #13 delayed 8000 ms (1000 x Fib(13) capped 8000)
+[2026-10-29T11:48:53.477Z] [ws] message #14 delayed 8000 ms (1000 x Fib(14) capped 8000)
+[2026-10-29T11:48:53.872Z] [ws] message #15 delayed 8000 ms (1000 x Fib(15) capped 8000)
+[2026-10-29T11:48:54.271Z] [ws] message #16 delayed 8000 ms (1000 x Fib(16) capped 8000)
+[2026-10-29T11:48:54.672Z] [ws] message #17 delayed 8000 ms (1000 x Fib(17) capped 8000)
+[2026-10-29T11:48:54.875Z] console: [BOUNDARY] rejected corrupted balance: 1e+7
+[2026-10-29T11:48:54.905Z] PASS  frontend raised structured exception boundary (red integrity banner painted)
+[2026-10-29T11:48:54.910Z] PASS  boundary error counter = 1
+[2026-10-29T11:48:54.967Z] SUMMARY: ALL CHECKS PASSED

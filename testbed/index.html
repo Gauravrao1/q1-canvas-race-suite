@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Canvas Live Terminal (Q1 testbed)</title>
+<style>body{margin:0;background:#111}canvas{display:block;margin:20px auto;background:#1b1b1b}</style>
+</head>
+<body>
+<!-- Everything meaningful is painted on the canvas. No DOM buttons/labels exist. -->
+<canvas id="term" width="640" height="420"></canvas>
+<script>
+(() => {
+  const NAIVE = new URLSearchParams(location.search).has('naive'); // naive = no exception boundary (for negative testing)
+  const cv = document.getElementById('term');
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+
+  // ---- state ----
+  const GRAY = '#808080', CONFIRM = '#2962ff', ERROR = '#d50000';
+  const CELL_W = 170, CELL_H = 110, GAP = 20, ORIGIN_X = 40, ORIGIN_Y = 90;
+  const state = {
+    cells: new Array(6).fill(GRAY),    // loading = gray
+    drift: 0,                          // layout drift in px (changes with every tick)
+    balance: '----',
+    boundaryError: false,
+    confirmed: false,
+    drag: 0,
+  };
+  window.__frame = 0;
+  window.__boundaryErrors = 0;
+  window.__events = [];
+
+  const cellRect = (i) => ({
+    x: ORIGIN_X + (i % 3) * (CELL_W + GAP) + state.drift,
+    y: ORIGIN_Y + Math.floor(i / 3) * (CELL_H + GAP),
+    w: CELL_W, h: CELL_H,
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = '#1b1b1b'; ctx.fillRect(0, 0, cv.width, cv.height);
+    // header / balance
+    ctx.fillStyle = state.boundaryError ? ERROR : '#263238';
+    ctx.fillRect(0, 0, cv.width, 60);
+    ctx.fillStyle = '#fff'; ctx.font = '22px monospace';
+    ctx.fillText(state.boundaryError ? 'DATA INTEGRITY ERROR' : 'BAL ' + state.balance, 20, 38);
+    state.cells.forEach((c, i) => {
+      const r = cellRect(i);
+      ctx.fillStyle = (i === 4 && state.confirmed) ? CONFIRM : c;
+      ctx.fillRect(r.x, r.y, r.w, r.h);
+      if (i === 4 && state.drag) { ctx.fillStyle = '#fff'; ctx.fillRect(r.x + 10 + state.drag, r.y + 10, 8, 8); }
+    });
+    window.__frame++;
+  }
+  (function loop() { draw(); requestAnimationFrame(loop); })();
+
+  // ---- websocket ----
+  const ws = new WebSocket(`ws://${location.host}/stream`);
+  ws.onmessage = (ev) => {
+    let m; try { m = JSON.parse(ev.data); } catch { return; }
+    if (m.type === 'ready') {
+      state.cells = m.cells;
+      // late reflow: layout shifts shortly AFTER first coloured paint (simulates repaint lag / coordinate drift)
+      setTimeout(() => { state.drift = 120; }, 20);
+    }
+    if (m.type === 'tick') {
+      state.drift = Number(m.drift) || 0;
+      // EXCEPTION BOUNDARY: accept only plain decimal money strings with <= 2 fractional digits
+      const ok = typeof m.balance === 'string' && /^\d{1,9}(\.\d{1,2})?$/.test(m.balance);
+      if (ok || NAIVE) { state.balance = String(m.balance); }
+      else {
+        state.boundaryError = true;
+        window.__boundaryErrors++;
+        console.error('[BOUNDARY] rejected corrupted balance:', m.balance);
+      }
+    }
+  };
+
+  // ---- pointer interaction on the target cell (index 4) ----
+  let down = null;
+  cv.addEventListener('mousedown', (e) => {
+    const b = cv.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top, r = cellRect(4);
+    if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) { down = x; window.__events.push('down'); }
+  });
+  cv.addEventListener('mousemove', (e) => {
+    if (down === null) return;
+    const b = cv.getBoundingClientRect(); state.drag = Math.round(e.clientX - b.left - down);
+  });
+  cv.addEventListener('mouseup', () => { if (down !== null) { window.__events.push('up:' + state.drag); down = null; } });
+  cv.addEventListener('click', (e) => {
+    const b = cv.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top, r = cellRect(4);
+    if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) { state.confirmed = true; window.__events.push('click'); }
+  });
+})();
+</script>
+</body>
+</html>
